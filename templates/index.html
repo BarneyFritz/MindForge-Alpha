@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindForge Alpha</title>
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="matrix-rain" id="matrixRain"></div>
+    <div class="container">
+        <div class="header"><h1>MindForge Alpha</h1><p>The Foundation for Collaborative Intelligence</p></div>
+        <div class="main-content">
+            <div class="input-section">
+                <h2>🧠 Project Input</h2>
+                <div class="form-group"><label for="projectName">Project Name</label><input type="text" id="projectName" placeholder="e.g., AI-Powered Recipe Generator"></div>
+                <div class="form-group"><label for="projectDescription">Project Description</label><textarea id="projectDescription" placeholder="Describe your idea... What problem does it solve? Who is it for?"></textarea></div>
+                <div class="form-group">
+                    <label>Select LLMs to Query</label>
+                    <div class="llm-selection">
+                        <div class="llm-checkbox gemini"><input type="checkbox" id="gemini" checked><label for="gemini"><img src="/static/images/gemini_logo.png" alt="Gemini" class="llm-logo">Gemini</label></div>
+                        <div class="llm-checkbox claude"><input type="checkbox" id="claude" checked><label for="claude"><img src="/static/images/claude_logo.png" alt="Claude" class="llm-logo">Claude</label></div>
+                        <div class="llm-checkbox chatgpt"><input type="checkbox" id="chatgpt" checked><label for="chatgpt"><img src="/static/images/chatgpt_logo.png" alt="ChatGPT" class="llm-logo">ChatGPT</label></div>
+                        <div class="llm-checkbox perplexity"><input type="checkbox" id="perplexity" checked><label for="perplexity"><img src="/static/images/perplexity_logo.png" alt="Perplexity" class="llm-logo">Perplexity</label></div>
+                    </div>
+                </div>
+                <button class="btn" id="brainstormBtn">🚀 Start Brainstorming</button>
+            </div>
+            <div class="results-section">
+                <h2>🎯 LLM Responses</h2>
+                <div class="loading" id="loading"><div class="spinner"></div><p>Querying selected LLMs...</p></div>
+                <div id="responses"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
