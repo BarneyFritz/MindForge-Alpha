@@ -1,26 +1,49 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Initialize Visuals ---
     createParticles();
     createMatrixRain();
+
+    // Add click listener for the LLM selection buttons to add a visual indicator
+    const llmCheckboxes = document.querySelectorAll('.llm-checkbox');
+    llmCheckboxes.forEach(box => {
+        const input = box.querySelector('input[type="checkbox"]');
+        if (input.checked) {
+            box.classList.add('selected');
+        }
+        box.addEventListener('click', () => {
+            input.checked = !input.checked;
+            box.classList.toggle('selected', input.checked);
+        });
+    });
+
     const brainstormBtn = document.getElementById('brainstormBtn');
     const responsesContainer = document.getElementById('responses');
     const loadingIndicator = document.getElementById('loading');
     const matrixRain = document.getElementById('matrixRain');
+
+    // --- Main Brainstorm Button Logic ---
     brainstormBtn.addEventListener('click', async () => {
         const projectName = document.getElementById('projectName').value.trim();
         const projectDescription = document.getElementById('projectDescription').value.trim();
+
         if (!projectName || !projectDescription) {
             alert('Please fill in the project name and description.');
             return;
         }
+
         const selectedLLMs = Array.from(document.querySelectorAll('.llm-selection input:checked')).map(input => input.id);
+
         if (selectedLLMs.length === 0) {
             alert('Please select at least one LLM.');
             return;
         }
+
+        // --- Show Loading State ---
         loadingIndicator.classList.add('active');
         matrixRain.classList.add('active');
         responsesContainer.innerHTML = '';
         brainstormBtn.disabled = true;
+
         const fullPrompt = `Act as an expert product manager and software architect.
         Project Name: "${projectName}"
         Project Description: "${projectDescription}"
@@ -29,34 +52,44 @@ document.addEventListener('DOMContentLoaded', () => {
         2.  Key Features (MVP).
         3.  Recommended Technology Stack.
         4.  First Steps for development.`;
+
         try {
             const response = await fetch('/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ prompt: fullPrompt, llms: selectedLLMs }),
             });
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'An unknown server error occurred.');
             }
+
             const data = await response.json();
             data.forEach(res => createResponseCard(res.llm, res.response));
+
         } catch (error) {
             console.error('Error fetching from backend:', error);
             createResponseCard('error', `An error occurred: ${error.message}`);
         } finally {
+            // --- Hide Loading State ---
             loadingIndicator.classList.remove('active');
             matrixRain.classList.remove('active');
             brainstormBtn.disabled = false;
         }
     });
 });
+
+// --- UI Helper Functions ---
 function createResponseCard(llm, responseText) {
     const responsesContainer = document.getElementById('responses');
     const card = document.createElement('div');
     card.className = `llm-response ${llm}`;
-    const logoUrl = document.querySelector(`#${llm} + label img`)?.src || 'https://i.ibb.co/vzVvJ4G/error-icon.png';
+
+    const logoEl = document.querySelector(`#${llm} + label img`);
+    const logoUrl = logoEl ? logoEl.src : 'https://i.ibb.co/vzVvJ4G/error-icon.png';
     const llmName = llm.charAt(0).toUpperCase() + llm.slice(1);
+
     card.innerHTML = `
         <div class="response-header">
             <h3><img src="${logoUrl}" alt="${llmName} Logo" class="llm-logo">${llmName}</h3>
@@ -66,6 +99,7 @@ function createResponseCard(llm, responseText) {
         </div>`;
     responsesContainer.appendChild(card);
 }
+
 function createParticles() {
     const container = document.getElementById('particles');
     if (!container) return;
@@ -79,6 +113,7 @@ function createParticles() {
         container.appendChild(particle);
     }
 }
+
 function createMatrixRain() {
     const container = document.getElementById('matrixRain');
     if (!container) return;
@@ -99,3 +134,4 @@ function createMatrixRain() {
     styleSheet.type = "text/css";
     styleSheet.innerText = keyframes;
     document.head.appendChild(styleSheet);
+}

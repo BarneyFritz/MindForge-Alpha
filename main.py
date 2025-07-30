@@ -7,24 +7,31 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# Load API Keys
+# --- Load API Keys from Codespaces Secrets ---
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 PERPLEXITY_API_KEY = os.environ.get('PERPLEXITY_API_KEY')
 
-# Configure API Libraries
+# --- Configure API Libraries ---
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
+
+openai_client = None
 if OPENAI_API_KEY:
-    openai.api_key = OPENAI_API_KEY
+    openai_client = openai.OpenAI(api_key=OPENAI_API_KEY)
+
 anthropic_client = None
 if ANTHROPIC_API_KEY:
     anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+# Correctly initialize the Perplexity client
 perplexity_client = None
 if PERPLEXITY_API_KEY:
     perplexity_client = PerplexityClient(PERPLEXITY_API_KEY)
 
+
+# --- Define the Routes (Webpages) ---
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -48,8 +55,8 @@ def generate():
                 responses.append({'llm': 'gemini', 'response': response.text})
 
             elif llm == 'chatgpt':
-                if not openai.api_key: raise ValueError("OpenAI API key not configured.")
-                chat_completion = openai.chat.completions.create(
+                if not openai_client: raise ValueError("OpenAI API key not configured.")
+                chat_completion = openai_client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt_text}],
                     model="gpt-4o",
                 )
@@ -66,7 +73,9 @@ def generate():
 
             elif llm == 'perplexity':
                 if not perplexity_client: raise ValueError("Perplexity API key not configured.")
+                # The query method directly returns the answer string.
                 response_data = perplexity_client.query(prompt_text)
+                # We just append that string directly.
                 responses.append({'llm': 'perplexity', 'response': response_data})
 
         except Exception as e:
@@ -76,5 +85,8 @@ def generate():
 
     return jsonify(responses)
 
+
+# --- Run the Application ---
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+    
