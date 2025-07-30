@@ -30,6 +30,11 @@ textarea { resize: vertical; min-height: 120px; }
 .llm-checkbox.claude { border-left: 4px solid #d97706; }
 .llm-checkbox.gemini { border-left: 4px solid #8b5cf6; }
 .llm-checkbox.perplexity { border-left: 4px solid #20b2aa; }
+.llm-checkbox.selected {
+    box-shadow: 0 0 15px rgba(74, 158, 255, 0.7);
+    border-color: #4a9eff;
+    transform: translateY(-2px);
+}
 .btn { width: 100%; background: linear-gradient(45deg, #4a9eff, #00ff88); color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3); }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4); }
 .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }

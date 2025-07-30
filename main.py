@@ -25,7 +25,7 @@ anthropic_client = None
 if ANTHROPIC_API_KEY:
     anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
-# CORRECTLY initialize the Perplexity client by passing the key directly
+# Correctly initialize the Perplexity client
 perplexity_client = None
 if PERPLEXITY_API_KEY:
     perplexity_client = PerplexityClient(PERPLEXITY_API_KEY)
@@ -89,3 +89,4 @@ def generate():
 # --- Run the Application ---
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+    

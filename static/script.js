@@ -1,9 +1,20 @@
-console.log("--- MindForge script.js loaded successfully! ---");
-
 document.addEventListener('DOMContentLoaded', () => {
     // --- Initialize Visuals ---
     createParticles();
     createMatrixRain();
+
+    // Add click listener for the LLM selection buttons to add a visual indicator
+    const llmCheckboxes = document.querySelectorAll('.llm-checkbox');
+    llmCheckboxes.forEach(box => {
+        const input = box.querySelector('input[type="checkbox"]');
+        if (input.checked) {
+            box.classList.add('selected');
+        }
+        box.addEventListener('click', () => {
+            input.checked = !input.checked;
+            box.classList.toggle('selected', input.checked);
+        });
+    });
 
     const brainstormBtn = document.getElementById('brainstormBtn');
     const responsesContainer = document.getElementById('responses');
@@ -92,7 +103,7 @@ function createResponseCard(llm, responseText) {
 function createParticles() {
     const container = document.getElementById('particles');
     if (!container) return;
-    for (let i = <strong>0</strong>; i < 50; i++) {
+    for (let i = 0; i < 50; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.style.left = `${Math.random() * 100}%`;
