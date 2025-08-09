@@ -32,8 +32,8 @@ def create_app(test_config=None):
         from .routes import jules
         app.register_blueprint(jules.bp)
 
-        # Import and register the synthesis blueprint
-        from .routes import synthesis
-        app.register_blueprint(synthesis.bp)
+        # Import and register the summary blueprint
+        from .routes import summary
+        app.register_blueprint(summary.bp)
 
     return app
