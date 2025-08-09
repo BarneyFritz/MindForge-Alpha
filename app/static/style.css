@@ -158,3 +158,96 @@ textarea { resize: vertical; min-height: 120px; }
     margin-right: 8px;
     vertical-align: middle;
 }
+
+/* --- Consensus Engine Styles --- */
+.btn-consensus {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, #f4c542, #ff8a00);
+    color: #111;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(244, 197, 66, 0.3);
+}
+
+.btn-consensus:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(244, 197, 66, 0.4);
+}
+
+.btn-consensus:disabled {
+    background: #555;
+    color: #888;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.synthesis-card {
+    background: rgba(255, 251, 234, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid gold;
+    border-left: 4px solid gold;
+    animation: slideIn 0.6s ease forwards;
+}
+
+.synthesis-card h3 {
+    color: #f4c542;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.synthesis-card .synthesis-content {
+    color: #e0e0e0;
+    line-height: 1.6;
+}
+
+.synthesis-card .synthesis-content h1,
+.synthesis-card .synthesis-content h2,
+.synthesis-card .synthesis-content h3 {
+    color: #f4c542;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+.synthesis-card .synthesis-content ul,
+.synthesis-card .synthesis-content ol {
+    padding-left: 20px;
+    margin-bottom: 1em;
+}
+
+.synthesis-card .synthesis-content code {
+    background-color: rgba(0,0,0,0.2);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.synthesis-card .btn-send-to-jules {
+    background: rgba(244, 197, 66, 0.2);
+    color: #f4c542;
+    box-shadow: none;
+    font-size: 14px;
+    padding: 8px 15px;
+    border-radius: 8px;
+    width: auto;
+    border: 1px solid rgba(244, 197, 66, 0.5);
+}
+
+.synthesis-card .btn-send-to-jules:hover {
+    background: rgba(244, 197, 66, 0.3);
+    box-shadow: 0 0 10px rgba(244, 197, 66, 0.5);
+    color: #fff;
+}

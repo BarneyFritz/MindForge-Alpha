@@ -6,6 +6,7 @@
     <title>MindForge Beta</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="particles" id="particles"></div>
@@ -54,6 +55,7 @@
             </div>
             <div class="results-section">
                 <h2>🎯 LLM Responses</h2>
+                <button id="synthesize-btn" class="btn-consensus">Synthesize Results</button>
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
                     <p>Querying selected LLMs...</p>

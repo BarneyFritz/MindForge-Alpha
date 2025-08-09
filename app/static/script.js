@@ -80,6 +80,81 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+    const synthesizeBtn = document.getElementById('synthesize-btn');
+    if (synthesizeBtn) {
+        synthesizeBtn.addEventListener('click', async () => {
+            const responseElements = document.querySelectorAll('.llm-response .response-content p');
+
+            if (responseElements.length < 1) {
+                alert('Please generate at least one response before synthesizing.');
+                return;
+            }
+
+            const responseMap = { a: '', b: '', c: '', d: '' };
+            const llmClasses = ['gemini', 'claude', 'chatgpt', 'perplexity'];
+            const keys = ['a', 'b', 'c', 'd'];
+
+            llmClasses.forEach((llmClass, index) => {
+                const responseCard = document.querySelector(`.llm-response.${llmClass} .response-content p`);
+                if (responseCard) {
+                    responseMap[keys[index]] = responseCard.innerText.trim();
+                }
+            });
+
+            synthesizeBtn.disabled = true;
+            synthesizeBtn.textContent = 'Synthesizing...';
+
+            try {
+                const response = await fetch('/api/synthesis', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ responses: responseMap }),
+                });
+
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || 'Failed to synthesize results.');
+                }
+
+                const synthesisMarkdown = result.synthesis;
+
+                const existingCard = document.querySelector('.synthesis-card');
+                if (existingCard) {
+                    existingCard.remove();
+                }
+
+                const synthesisCard = document.createElement('div');
+                synthesisCard.className = 'synthesis-card';
+                synthesisCard.innerHTML = `
+                    <h3><img src="https://i.ibb.co/3fdp6S4/brain-circuit.png" alt="Consensus" class="llm-logo"> Consensus Master Plan</h3>
+                    <div class="synthesis-content">${marked.parse(synthesisMarkdown)}</div>
+                    <div class="response-actions">
+                        <button class="btn btn-secondary btn-send-to-jules">Send to Jules</button>
+                    </div>
+                `;
+
+                const sendToJulesBtn = synthesisCard.querySelector('.btn-send-to-jules');
+                sendToJulesBtn.addEventListener('click', () => {
+                    if (window.openJulesModal) {
+                        window.openJulesModal(synthesisMarkdown, 'Consensus Engine');
+                    } else {
+                        alert('Jules modal functionality is not available.');
+                    }
+                });
+
+                responsesContainer.prepend(synthesisCard);
+
+            } catch (error) {
+                console.error('Synthesis Error:', error);
+                alert(`Error during synthesis: ${error.message}`);
+            } finally {
+                synthesizeBtn.disabled = false;
+                synthesizeBtn.textContent = 'Synthesize Results';
+            }
+        });
+    }
+});
+
 // --- UI Helper Functions ---
 function createResponseCard(llm, responseText) {
     const responsesContainer = document.getElementById('responses');
