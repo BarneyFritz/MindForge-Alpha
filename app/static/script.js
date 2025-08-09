@@ -66,7 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            data.forEach(res => createResponseCard(res.llm, res.response));
+            console.log(data);
+            data.forEach(res => createResponseCard(res.llm, res.response, res.model));
 
         } catch (error) {
             console.error('Error fetching from backend:', error);
@@ -76,25 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingIndicator.classList.remove('active');
             matrixRain.classList.remove('active');
             brainstormBtn.disabled = false;
-
-            // --- Show Synthesize Button If Results Exist ---
-            const responseCards = responsesContainer.querySelectorAll('.llm-response');
-            if (responseCards.length > 0) {
-                synthesizeBtn.style.display = 'block';
-            }
+            document.querySelector('.main-content').classList.add('show-results');
         }
     });
+});
 
-    const synthesizeBtn = document.getElementById('synthesize-btn');
-    // --- Initially hide the synthesize button ---
-    synthesizeBtn.style.display = 'none';
-
-    if (synthesizeBtn) {
-        synthesizeBtn.addEventListener('click', async () => {
+    const generateSummaryBtn = document.getElementById('generate-summary-btn');
+    if (generateSummaryBtn) {
+        generateSummaryBtn.addEventListener('click', async () => {
             const responseElements = document.querySelectorAll('.llm-response .response-content p');
 
             if (responseElements.length < 1) {
-                alert('Please generate at least one response before synthesizing.');
+                alert('Please generate at least one response before generating a summary.');
                 return;
             }
 
@@ -109,11 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            synthesizeBtn.disabled = true;
-            synthesizeBtn.textContent = 'Synthesizing...';
+            generateSummaryBtn.disabled = true;
+            generateSummaryBtn.textContent = 'Generating Summary...';
 
             try {
-                const response = await fetch('/api/synthesis', {
+                const response = await fetch('/api/summary', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ responses: responseMap }),
@@ -121,50 +115,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const result = await response.json();
                 if (!response.ok) {
-                    throw new Error(result.error || 'Failed to synthesize results.');
+                    throw new Error(result.error || 'Failed to generate summary.');
                 }
 
-                const synthesisMarkdown = result.synthesis;
+                const summaryMarkdown = result.summary;
+                const modelName = result.model;
 
-                const existingCard = document.querySelector('.synthesis-card');
+                const existingCard = document.querySelector('.summary-card');
                 if (existingCard) {
                     existingCard.remove();
                 }
 
-                const synthesisCard = document.createElement('div');
-                synthesisCard.className = 'synthesis-card';
-                synthesisCard.innerHTML = `
-                    <h3><img src="https://i.ibb.co/3fdp6S4/brain-circuit.png" alt="Consensus" class="llm-logo"> Consensus Master Plan</h3>
-                    <div class="synthesis-content">${marked.parse(synthesisMarkdown)}</div>
+                const summaryCard = document.createElement('div');
+                summaryCard.className = 'summary-card';
+                summaryCard.innerHTML = `
+                    <h3><img src="https://i.ibb.co/3fdp6S4/brain-circuit.png" alt="Summary" class="llm-logo"> Summary Master Plan</h3>
+                    <p class="model-name">Model: ${modelName}</p>
+                    <div class="summary-content">${marked.parse(summaryMarkdown)}</div>
                     <div class="response-actions">
                         <button class="btn btn-secondary btn-send-to-jules">Send to Jules</button>
                     </div>
                 `;
 
-                const sendToJulesBtn = synthesisCard.querySelector('.btn-send-to-jules');
+                const sendToJulesBtn = summaryCard.querySelector('.btn-send-to-jules');
                 sendToJulesBtn.addEventListener('click', () => {
                     if (window.openJulesModal) {
-                        window.openJulesModal(synthesisMarkdown, 'Consensus Engine');
+                        window.openJulesModal(summaryMarkdown, 'Summary Engine');
                     } else {
                         alert('Jules modal functionality is not available.');
                     }
                 });
 
-                responsesContainer.prepend(synthesisCard);
+                responsesContainer.prepend(summaryCard);
 
             } catch (error) {
-                console.error('Synthesis Error:', error);
-                alert(`Error during synthesis: ${error.message}`);
+                console.error('Summary Error:', error);
+                alert(`Error during summary generation: ${error.message}`);
             } finally {
-                synthesizeBtn.disabled = false;
-                synthesizeBtn.textContent = 'Synthesize Results';
+                generateSummaryBtn.disabled = false;
+                generateSummaryBtn.textContent = 'Generate Summary';
             }
         });
     }
 });
 
 // --- UI Helper Functions ---
-function createResponseCard(llm, responseText) {
+function createResponseCard(llm, responseText, modelName) {
     const responsesContainer = document.getElementById('responses');
     const card = document.createElement('div');
     card.className = `llm-response ${llm}`;
@@ -177,6 +173,7 @@ function createResponseCard(llm, responseText) {
     card.innerHTML = `
         <div class="response-header">
             <h3><img src="${logoUrl}" alt="${llmName} Logo" class="llm-logo">${llmName}</h3>
+            <p class="model-name">Model: ${modelName}</p>
         </div>
         <div class="response-content">
             <p>${responseText.replace(/\n/g, '<br>')}</p>

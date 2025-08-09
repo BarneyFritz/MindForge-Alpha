@@ -10,7 +10,17 @@ body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #0f
 .header h1 { font-size: 3em; background: linear-gradient(45deg, #4a9eff, #00ff88, #ff6b6b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; animation: glow 2s ease-in-out infinite alternate; }
 @keyframes glow { from { text-shadow: 0 0 20px #4a9eff; } to { text-shadow: 0 0 30px #00ff88; } }
 .header p { font-size: 1.2em; color: #a0a0a0; }
-.main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+    transition: grid-template-columns 0.5s ease-in-out;
+}
+
+.main-content.show-results {
+    grid-template-columns: 1fr 3fr;
+}
 .input-section, .results-section { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 30px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
 .input-section h2, .results-section h2 { margin-bottom: 20px; font-size: 1.5em; }
 .input-section h2 { color: #4a9eff; }
@@ -31,9 +41,8 @@ textarea { resize: vertical; min-height: 120px; }
 .llm-checkbox.gemini { border-left: 4px solid #8b5cf6; }
 .llm-checkbox.perplexity { border-left: 4px solid #20b2aa; }
 .llm-checkbox.selected {
-    background: rgba(74, 158, 255, 0.15);
+    box-shadow: 0 0 15px rgba(74, 158, 255, 0.7);
     border-color: #4a9eff;
-    box-shadow: 0 0 15px rgba(74, 158, 255, 0.5);
     transform: translateY(-2px);
 }
 .btn { width: 100%; background: linear-gradient(45deg, #4a9eff, #00ff88); color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3); }
@@ -48,6 +57,7 @@ textarea { resize: vertical; min-height: 120px; }
 .llm-response.error { border-left-color: #ff6b6b; }
 .response-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .response-header h3 { color: #e0e0e0; font-size: 1.2em; display: flex; align-items: center; }
+.response-header .model-name { font-size: 0.9em; color: #a0a0a0; }
 .response-header h3 img { width: 24px; height: 24px; margin-right: 10px; border-radius: 5px; }
 .loading { display: none; text-align: center; padding: 20px; color: #4a9eff; }
 .loading.active { display: block; }
@@ -192,7 +202,7 @@ textarea { resize: vertical; min-height: 120px; }
     box-shadow: none;
 }
 
-.synthesis-card {
+.summary-card {
     background: rgba(255, 251, 234, 0.05);
     border-radius: 10px;
     padding: 20px;
@@ -202,7 +212,7 @@ textarea { resize: vertical; min-height: 120px; }
     animation: slideIn 0.6s ease forwards;
 }
 
-.synthesis-card h3 {
+.summary-card h3 {
     color: #f4c542;
     font-size: 1.2em;
     display: flex;
@@ -210,33 +220,33 @@ textarea { resize: vertical; min-height: 120px; }
     margin-bottom: 15px;
 }
 
-.synthesis-card .synthesis-content {
+.summary-card .summary-content {
     color: #e0e0e0;
     line-height: 1.6;
 }
 
-.synthesis-card .synthesis-content h1,
-.synthesis-card .synthesis-content h2,
-.synthesis-card .synthesis-content h3 {
+.summary-card .summary-content h1,
+.summary-card .summary-content h2,
+.summary-card .summary-content h3 {
     color: #f4c542;
     margin-top: 1em;
     margin-bottom: 0.5em;
 }
 
-.synthesis-card .synthesis-content ul,
-.synthesis-card .synthesis-content ol {
+.summary-card .summary-content ul,
+.summary-card .summary-content ol {
     padding-left: 20px;
     margin-bottom: 1em;
 }
 
-.synthesis-card .synthesis-content code {
+.summary-card .summary-content code {
     background-color: rgba(0,0,0,0.2);
     padding: 2px 4px;
     border-radius: 4px;
     font-family: 'Courier New', Courier, monospace;
 }
 
-.synthesis-card .btn-send-to-jules {
+.summary-card .btn-send-to-jules {
     background: rgba(244, 197, 66, 0.2);
     color: #f4c542;
     box-shadow: none;
@@ -247,8 +257,14 @@ textarea { resize: vertical; min-height: 120px; }
     border: 1px solid rgba(244, 197, 66, 0.5);
 }
 
-.synthesis-card .btn-send-to-jules:hover {
+.summary-card .btn-send-to-jules:hover {
     background: rgba(244, 197, 66, 0.3);
     box-shadow: 0 0 10px rgba(244, 197, 66, 0.5);
     color: #fff;
+}
+
+.summary-card .model-name {
+    font-size: 0.9em;
+    color: #a0a0a0;
+    margin-bottom: 15px;
 }
