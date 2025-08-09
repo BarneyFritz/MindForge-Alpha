@@ -76,11 +76,19 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingIndicator.classList.remove('active');
             matrixRain.classList.remove('active');
             brainstormBtn.disabled = false;
+
+            // --- Show Synthesize Button If Results Exist ---
+            const responseCards = responsesContainer.querySelectorAll('.llm-response');
+            if (responseCards.length > 0) {
+                synthesizeBtn.style.display = 'block';
+            }
         }
     });
-});
 
     const synthesizeBtn = document.getElementById('synthesize-btn');
+    // --- Initially hide the synthesize button ---
+    synthesizeBtn.style.display = 'none';
+
     if (synthesizeBtn) {
         synthesizeBtn.addEventListener('click', async () => {
             const responseElements = document.querySelectorAll('.llm-response .response-content p');

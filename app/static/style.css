@@ -31,8 +31,9 @@ textarea { resize: vertical; min-height: 120px; }
 .llm-checkbox.gemini { border-left: 4px solid #8b5cf6; }
 .llm-checkbox.perplexity { border-left: 4px solid #20b2aa; }
 .llm-checkbox.selected {
-    box-shadow: 0 0 15px rgba(74, 158, 255, 0.7);
+    background: rgba(74, 158, 255, 0.15);
     border-color: #4a9eff;
+    box-shadow: 0 0 15px rgba(74, 158, 255, 0.5);
     transform: translateY(-2px);
 }
 .btn { width: 100%; background: linear-gradient(45deg, #4a9eff, #00ff88); color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3); }
