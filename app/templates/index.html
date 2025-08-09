@@ -63,5 +63,27 @@
         </div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jules.js') }}"></script>
+
+    <!-- Jules Delegation Modal -->
+    <div id="julesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Delegate Task to Jules</h2>
+            <p>Review the details below and confirm to create a GitHub issue.</p>
+            <div class="form-group">
+                <label for="issueTitle">Issue Title</label>
+                <input type="text" id="issueTitle" placeholder="e.g., Implement feature from LLM suggestion">
+            </div>
+            <div class="form-group">
+                <label for="issueBody">Issue Body</label>
+                <textarea id="issueBody" rows="15" readonly></textarea>
+            </div>
+            <div class="modal-actions">
+                <button id="confirmDelegateBtn" class="btn">🚀 Create Issue</button>
+                <button type="button" class="btn btn-secondary close-button">Cancel</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
