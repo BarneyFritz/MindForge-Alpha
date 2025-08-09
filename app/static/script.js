@@ -90,13 +90,25 @@ function createResponseCard(llm, responseText) {
     const logoUrl = logoEl ? logoEl.src : 'https://i.ibb.co/vzVvJ4G/error-icon.png';
     const llmName = llm.charAt(0).toUpperCase() + llm.slice(1);
 
+    // Using a template literal for the main structure
     card.innerHTML = `
         <div class="response-header">
             <h3><img src="${logoUrl}" alt="${llmName} Logo" class="llm-logo">${llmName}</h3>
         </div>
         <div class="response-content">
             <p>${responseText.replace(/\n/g, '<br>')}</p>
+        </div>
+        <div class="response-actions">
+            <button class="btn btn-secondary btn-delegate">Delegate to Jules</button>
         </div>`;
+
+    // Safely store the raw response text on the button element using a data attribute
+    const delegateButton = card.querySelector('.btn-delegate');
+    if (delegateButton) {
+        delegateButton.dataset.response = responseText;
+        delegateButton.dataset.llm = llmName;
+    }
+
     responsesContainer.appendChild(card);
 }
 

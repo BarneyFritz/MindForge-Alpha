@@ -3,17 +3,23 @@ import google.generativeai as genai
 import openai
 import anthropic
 from perplexipy import PerplexityClient
-from flask import Flask, render_template, request, jsonify
+from flask import (
+    Blueprint, render_template, request, jsonify, current_app
+)
 
-app = Flask(__name__)
+# Create a Blueprint
+bp = Blueprint('dashboard', __name__, url_prefix='/')
 
-# --- Load API Keys from Codespaces Secrets ---
+# --- Load API Keys and Configure Clients ---
+# This logic is now at the module level of the blueprint. It will be executed
+# once when the application starts.
+
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 PERPLEXITY_API_KEY = os.environ.get('PERPLEXITY_API_KEY')
 
-# --- Configure API Libraries ---
+# Configure API libraries
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 
@@ -25,19 +31,20 @@ anthropic_client = None
 if ANTHROPIC_API_KEY:
     anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
-# Correctly initialize the Perplexity client
 perplexity_client = None
 if PERPLEXITY_API_KEY:
     perplexity_client = PerplexityClient(PERPLEXITY_API_KEY)
 
 
-# --- Define the Routes (Webpages) ---
-@app.route('/')
+@bp.route('/')
 def home():
+    """Renders the main page."""
     return render_template('index.html')
 
-@app.route('/generate', methods=['POST'])
+
+@bp.route('/generate', methods=['POST'])
 def generate():
+    """Handles the LLM generation request."""
     data = request.get_json()
     prompt_text = data.get('prompt')
     selected_llms = data.get('llms', [])
@@ -73,20 +80,13 @@ def generate():
 
             elif llm == 'perplexity':
                 if not perplexity_client: raise ValueError("Perplexity API key not configured.")
-                # The query method directly returns the answer string.
                 response_data = perplexity_client.query(prompt_text)
-                # We just append that string directly.
                 responses.append({'llm': 'perplexity', 'response': response_data})
 
         except Exception as e:
             error_message = f"Error calling {llm.capitalize()}: {str(e)}"
-            print(error_message)
-            responses.append({'llm': llm, 'response': error_message})
+            # Use current_app.logger for logging in Flask
+            current_app.logger.error(error_message)
+            responses.append({'llm': llm, 'response': f"An error occurred with {llm.capitalize()}. Please check the logs."})
 
     return jsonify(responses)
-
-
-# --- Run the Application ---
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-    
