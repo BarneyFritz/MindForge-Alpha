@@ -59,34 +59,35 @@ def generate():
                 if not GEMINI_API_KEY: raise ValueError("Gemini API key not configured.")
                 model = genai.GenerativeModel('gemini-1.5-flash-latest')
                 response = model.generate_content(prompt_text)
-                responses.append({'llm': 'gemini', 'response': response.text})
+                responses.append({'llm': 'gemini', 'response': response.text, 'model': 'gemini-1.5-flash-latest'})
 
             elif llm == 'chatgpt':
                 if not openai_client: raise ValueError("OpenAI API key not configured.")
                 chat_completion = openai_client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt_text}],
-                    model="gpt-4o",
+                    model="gpt-4o-latest",
                 )
-                responses.append({'llm': 'chatgpt', 'response': chat_completion.choices[0].message.content})
+                responses.append({'llm': 'chatgpt', 'response': chat_completion.choices[0].message.content, 'model': 'gpt-4o-latest'})
 
             elif llm == 'claude':
                 if not anthropic_client: raise ValueError("Anthropic API key not configured.")
                 message = anthropic_client.messages.create(
-                    model="claude-3-haiku-20240307",
+                    model="claude-3-haiku-latest",
                     max_tokens=2048,
                     messages=[{"role": "user", "content": prompt_text}]
                 )
-                responses.append({'llm': 'claude', 'response': message.content[0].text})
+                responses.append({'llm': 'claude', 'response': message.content[0].text, 'model': 'claude-3-haiku-latest'})
 
             elif llm == 'perplexity':
                 if not perplexity_client: raise ValueError("Perplexity API key not configured.")
+                # The perplexipy library does not currently support specifying a model version.
+                # It uses the default model for the authenticated user.
                 response_data = perplexity_client.query(prompt_text)
-                responses.append({'llm': 'perplexity', 'response': response_data})
+                responses.append({'llm': 'perplexity', 'response': response_data, 'model': 'default'})
 
         except Exception as e:
             error_message = f"Error calling {llm.capitalize()}: {str(e)}"
-            # Use current_app.logger for logging in Flask
             current_app.logger.error(error_message)
-            responses.append({'llm': llm, 'response': f"An error occurred with {llm.capitalize()}. Please check the logs."})
+            responses.append({'llm': llm, 'response': f"An error occurred with {llm.capitalize()}. Please check the logs.", 'model': 'unknown'})
 
     return jsonify(responses)
