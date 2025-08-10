@@ -1,0 +1,1 @@
+from app.utils.db import Base  # re-export for model modules
